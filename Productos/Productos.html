@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos | iPlace</title>
+    <!-- Enlazando a la hoja de estilos unificada -->
+    <link rel="stylesheet" href="./productos_style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="../index.html">
+                <h1 href="">iPlace</h1>
+            </a>
+        </div>
+        <nav>
+             <ul>
+                <li><a href="../index.html" >Inicio</a></li>
+                <li><a href="../Productos/Productos.html" >Productos</a></li>
+                <li><a href="../Contacto/contactos.html">Contacto</a></li>
+            </ul>
+        </nav>
+        <div class="search-and-cart">
+            <a href = "../Carrito/pagina_carrito.html" class="cart-button">🛒 Carrito (0)</a>
+        </div>
+    </header>
+
+    <main class="products-page-main">
+        <div class="products-header">
+            <h1>Explora Nuestros Productos</h1>
+            <p>Encuentra la tecnología que se adapta a tu vida, con el diseño y la potencia que solo Apple puede ofrecer.</p>
+        </div>
+
+        <!-- Filtros de Categoría -->
+        <div class="category-filters">
+            <button class="filter-btn" data-category="all">Todos</button>
+            <button class="filter-btn" data-category="iphone">iPhone</button>
+            <button class="filter-btn" data-category="ipad">iPad</button>
+            <button class="filter-btn" data-category="mac">Mac</button>
+            <button class="filter-btn" data-category="watch">Watch</button>
+            <button class="filter-btn" data-category="audio">Audio</button>
+            <button class="filter-btn" data-category="accesorios">Accesorios</button>
+        </div>
+
+        <!-- Secciones de Productos -->
+        <section class="product-category" data-category="iphone">
+            <h2 class="category-title" data-category="iphone">iPhone</h2>
+            <div class="product-grid">
+                <div data-id="iphone16promax" class="product-card" data-category="iphone">
+                    <div class="product-image-placeholder first-image"></div>
+                    <h3>iPhone 16 Pro Max</h3>
+                    <p class="price">$1.299</p>
+                    <a href="../Producto/pagina_producto.html" class="view-product-btn">Ver más</a>
+                </div>
+                <div class="product-card" data-id="iphonese" data-category="iphone">
+                    <div class="product-image-placeholder second-image"></div>
+                    <h3>iPhone SE</h3>
+                    <p class="price">$429</p>
+                    <a href="../Producto/pagina_producto.html" class="view-product-btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="product-category" data-category="ipad">
+            <h2 class="category-title" data-category="ipad">iPad</h2>
+            <div class="product-grid">
+                <div class="product-card" data-id="ipadpro" data-category="ipad">
+                    <div class="product-image-placeholder third-image"></div>
+                    <h3>iPad Pro</h3>
+                    <p class="price">$799</p>
+                    <a href="../Producto/pagina_producto.html" class="view-product-btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="product-category" data-category="mac">
+            <h2 class="category-title" data-category="mac">Mac</h2>
+            <div class="product-grid">
+                <div class="product-card" data-id="macbookair15" data-category="mac">
+                    <div class="product-image-placeholder fourth-image"></div>
+                    <h3>MacBook Air 15''</h3>
+                    <p class="price">$1299</p>
+                    <a href="../Producto/pagina_producto.html" class="view-product-btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="product-category" data-category="watch">
+            <h2 class="category-title" data-category="watch">Apple Watch</h2>
+            <div class="product-grid">
+                <div class="product-card" data-id="applewatchseries10" data-category="watch">
+                    <div class="product-image-placeholder five-image"></div>
+                    <h3>Apple Watch Series 10</h3>
+                    <p class="price">$499</p>
+                    <a href="../Producto/pagina_producto.html" class="view-product-btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="product-category" data-category="audio">
+            <h2 class="category-title" data-category="audio">Audio</h2>
+            <div class="product-grid">
+                <div class="product-card" data-id="airpodspro" data-category="audio">
+                    <div class="product-image-placeholder six-image"></div>
+                    <h3>AirPods Pro</h3>
+                    <p class="price">$249</p>
+                    <a href="../Producto/pagina_producto.html" class="view-product-btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="product-category" data-category="accesorios">
+            <h2 class="category-title" data-category="accesorios">Accesorios</h2>
+            <div class="product-grid">
+                <div class="product-card" data-id="cargador_magsafe" data-category="accesorios">
+                    <div class="product-image-placeholder seven-image"></div>
+                    <h3>Cargador MagSafe</h3>
+                    <p class="price">$39</p>
+                    <a href="../Producto/pagina_producto.html" class="view-product-btn">Ver más</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contacto-footer">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3>Sobre nosotros</h3>
+                <p>iPlace es tu distribuidor oficial de productos Apple, ofreciendo la mejor calidad y servicio al cliente.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Enlaces útiles</h3>
+                <ul>
+                    <li><a href="#">Política de privacidad</a></li>
+                    <li><a href="#">Términos de servicio</a></li>
+                    <li><a href="#">Devoluciones y envíos</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contáctanos</h3>
+                <p>Email: info@iplace.com</p>
+                <p>Teléfono: +123 456 7890</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 iPlace. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="productos.js">
+    </script>
+</body>
+</html>
