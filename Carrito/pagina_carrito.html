@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras | iPlace</title>
+    <link rel="stylesheet" href="estilo_pagina_carrito.css">
+    </head>
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="../index.html">
+                <h1>iPlace</h1>
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="../index.html" >Inicio</a></li>
+                <li><a href="../Productos/Productos.html" >Productos</a></li>
+                <li><a href="../Contacto/contactos.html">Contacto</a></li>
+            </ul>
+        </nav>
+        <div class="search-and-cart">
+        
+            <a href = "../Carrito/pagina_carrito.html" class="cart-button">🛒 Carrito (0)</a>
+        </div>
+    </header>
+
+    <main id="carrito" class="cart-page">
+        <h2>🛒 Tu Carrito de Compras</h2>
+        
+        <section class="cart-items" id="cart-container"></section>
+
+        <section class="cart-summary">
+            <h3>Resumen del Pedido</h3>
+            <div class="summary-line">
+                <span>Subtotal:</span>
+                <span id="subtotal-price">$0</span>
+            </div>
+            <div class="summary-line">
+                <span>Envío:</span>
+                <span>Gratis</span>
+            </div>
+            <div class="summary-line total">
+                <span>Total:</span>
+                <span id="total-price">$0</span>
+            </div>
+            <button class="checkout-button">Finalizar Compra</button>
+        </section>
+
+    </main>
+
+    <footer id="contacto">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3>Sobre nosotros</h3>
+                <p>iPlace es tu distribuidor oficial de productos Apple, ofreciendo la mejor calidad y servicio al cliente.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Enlaces útiles</h3>
+                <ul>
+                    <li><a href="#">Política de privacidad</a></li>
+                    <li><a href="#">Términos de servicio</a></li>
+                    <li><a href="#">Devoluciones y envíos</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contáctanos</h3>
+                <p>Email: info@iplace.com</p>
+                <p>Teléfono: +123 456 7890</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 iPlace. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+    <script src="./carrito.js"> </script>
+</body>
+</html>
+
+

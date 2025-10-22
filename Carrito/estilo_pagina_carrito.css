@@ -1,0 +1,392 @@
+/* Importar una fuente de Google Fonts para un diseño más limpio */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Estilos globales para todo el cuerpo de la página */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f7;
+    color: #333;
+}
+
+/* Encabezado */
+header {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.logo h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #007bff; /* Un azul similar al de Apple */
+    transition: color 0.3s ease;
+}
+
+.logo a {
+    text-decoration: none;
+}
+
+.logo h1:hover {
+    color: #0056b3;
+}
+
+nav {
+    display: flex; /* Mantiene a los elementos juntos en la barra de navegación */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #f0f0f0;
+}
+
+/* Add default padding for all main content and ensure it's growing */
+main {
+    /* Set flex-grow here as a fallback or for non-#carrito pages */
+    flex-grow: 1; 
+    padding: 20px 5%;
+}
+
+/* Ensure the cart page doesn't double-apply padding if it's not needed */
+main.cart-page {
+    /* We can remove padding from cart-page as #carrito has 2rem 5% */
+    padding: 0;
+}
+
+.search-and-cart {
+    display: flex;
+    align-items: center;
+}
+
+.search-and-cart input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-right: 15px;
+    width: 150px;
+    transition: width 0.3s ease;
+}
+
+.search-and-cart input[type="text"]:focus {
+    width: 200px;
+    border-color: #007bff;
+}
+
+.cart-button {
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.cart-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+
+/* Pie de página */
+footer {
+    background-color: #222;
+    color: #eee;
+    padding: 40px 5%;
+    padding-bottom: 0.3%;
+    border-top: 5px solid #007bff;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.footer-section {
+    flex: 1;
+    margin-right: 20px;
+    min-width: 200px;
+}
+
+.footer-section h3 {
+    font-size: 1.2em;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section a {
+    color: #eee;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: #007bff;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #444;
+}
+
+/* --- Estilos para la página del carrito --- */
+#carrito{
+    display: flex;
+    /* FIX: Add justify-content to center the two columns horizontally */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 2rem 5%;
+    flex-grow: 1;
+}
+
+#carrito h2 {
+    /* Set the title to occupy the full width of the flex container (#carrito) */
+    width: 100%;
+    
+    /* Increase the size */
+    font-size: 2.5em; 
+    
+    /* Ensure the text is centered */
+    text-align: center; 
+    
+    /* Add padding/margin to push the content down */
+    margin-bottom: 30px; 
+    
+    /* Center the title block itself within the main container */
+    margin-left: auto; /* New: Ensures the block itself is centered */
+    margin-right: auto; /* New: Ensures the block itself is centered */
+
+    /* Apply a distinct color or style if desired (optional) */
+    color: #333; 
+    padding-top: 20px;
+}
+
+.cart-items {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Estilos para los productos en el carrito */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
+}
+
+/* --- MODIFICACIÓN CLAVE PARA EL TAMAÑO DE LA IMAGEN (Aumentado a 100px) --- */
+.cart-item .item-info {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Ajusta el espacio entre la imagen y el texto */
+}
+
+.cart-item .item-info img {
+    width: 100px; /* Tamaño de imagen aumentado a 100px */
+    height: 100px; /* Tamaño de imagen aumentado a 100px */
+    object-fit: contain; /* Asegura que la imagen se vea completa sin cortar */
+    border-radius: 6px;
+    border: 1px solid #f0f0f0;
+}
+/* -------------------------------------------------------- */
+
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.item-name {
+    margin: 0;
+    font-size: 1.1em;
+    color: #333;
+    font-weight: 700;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #007bff;
+    margin: 0;
+    font-size: 1em;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.item-quantity {
+    width: 50px;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.remove-item {
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-weight: 700;
+}
+
+.remove-item:hover {
+    background-color: #cc0000;
+    transform: translateY(-2px);
+}
+
+/* Estilos para el resumen del pedido */
+.cart-summary {
+    flex: 1;
+    background-color: #fff;
+    margin-top: 0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 250px;
+    height: fit-content; /* Se ajusta a la altura del contenido */
+}
+
+.cart-summary h3 {
+    margin: 0;
+    font-size: 1.5em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1em;
+}
+
+.summary-line.total {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #000;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.checkout-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.checkout-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Media Queries para diseño responsivo del carrito */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 2.5%;
+    }
+
+    /* Ajuste de Navegación */
+    nav {
+        /* Permite que el nav ocupe todo el ancho disponible */
+        flex: none; 
+        /* Quitar el padding extra de la versión de escritorio */
+        padding-left: 0; 
+        width: 100%;
+    }
+
+    nav ul {
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%; /* Asegura que la lista ocupe todo el ancho del nav */
+    }
+
+    nav li {
+        margin-right: 10px; /* Reducir el espacio entre elementos de la lista */
+        margin-bottom: 5px; /* Añadir un poco de espacio vertical si se envuelven */
+    }
+
+    .search-and-cart {
+        width: 100%; /* Ocupa el ancho completo */
+        justify-content: center; /* Centra el contenido si hay espacio, o simplemente alinea */
+        margin-top: 10px; /* Separación del menú */
+    }
+
+    .search-and-cart input[type="text"] {
+        flex-grow: 1; /* Permite que el campo de búsqueda se expanda */
+        max-width: 300px; /* Limita el ancho máximo para que no sea excesivo */
+    }
+    
+    main, main.cart-page, .contact-page-main, .products-page-main {
+        padding: 20px 2.5%;
+    }
+    
+    .hero-text h2 {
+        font-size: 2em;
+    }
+}
+
+
