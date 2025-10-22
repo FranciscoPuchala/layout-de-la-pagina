@@ -1,0 +1,340 @@
+/* --- Estilos para la página de producto (product-page) --- */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Estilos globales para todo el cuerpo de la página */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f7;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Encabezado */
+header {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.logo h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #007bff; /* Un azul similar al de Apple */
+    transition: color 0.3s ease;
+}
+
+.logo a {
+    text-decoration: none;
+}
+
+.logo h1:hover {
+    color: #0056b3;
+}
+
+nav {
+    display: flex; /* Mantiene a los elementos juntos en la barra de navegación */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #f0f0f0;
+}
+
+.search-and-cart {
+    display: flex;
+    align-items: center;
+}
+
+.search-and-cart input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-right: 15px;
+    width: 150px;
+    transition: width 0.3s ease;
+}
+
+.search-and-cart input[type="text"]:focus {
+    width: 200px;
+    border-color: #007bff;
+}
+
+.cart-button {
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.cart-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+
+/* SECCIÓN DE DETALLES DEL PRODUCTO */
+.product-page {
+    padding: 40px 5%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.product-details-container {
+    display: flex;
+    gap: 40px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-gallery {
+    flex: 1;
+    max-width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* **AJUSTE CRÍTICO DE IMAGEN** */
+/* Esto asegura que la imagen se ajuste al 100% del contenedor 
+   y no sea más ancha que su tamaño original, solucionando el problema del iPhone */
+.product-gallery img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.product-info {
+    flex: 1;
+    max-width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info h2 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.product-info .price {
+    font-size: 1.8em;
+    color: #007bff;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.description-section, .features-section {
+    margin-bottom: 25px;
+}
+
+.description-section h3, .features-section h3 {
+    font-size: 1.3em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.features-section ul {
+    list-style: disc;
+    margin-left: 20px;
+    padding: 0;
+}
+
+.features-section li {
+    margin-bottom: 8px;
+}
+
+
+/* Botón Añadir al carrito */
+.add-to-cart-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s;
+    font-size: 1.1em;
+    margin-top: auto;
+}
+
+.add-to-cart-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Notificación de carrito */
+.notification-message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    z-index: 1000;
+}
+
+.notification-message.fade-out {
+    opacity: 0;
+}
+
+
+/* Footer Styles */
+footer {
+    background-color: #222;
+    color: #eee;
+    margin-top: 6%;
+    padding: 40px;
+    padding-bottom: 0.3%;
+    border-top: 5px solid #007bff;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-section h3 {
+    font-size: 1.2em;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    color: #fff;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section a {
+    color: #eee;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: #007bff;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #444;
+}
+
+.footer-bottom p {
+    margin-bottom: 20px;
+}
+
+/* Media Queries para diseño responsivo */
+@media (max-width: 900px) {
+    .product-details-container {
+        flex-direction: column;
+    }
+
+    .product-gallery, .product-info {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 2.5%;
+    }
+
+    /* Ajuste de Navegación */
+    nav {
+        /* Permite que el nav ocupe todo el ancho disponible */
+        flex: none; 
+        /* Quitar el padding extra de la versión de escritorio */
+        padding-left: 0; 
+        width: 100%;
+    }
+
+    nav ul {
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%; /* Asegura que la lista ocupe todo el ancho del nav */
+    }
+
+    nav li {
+        margin-right: 10px; /* Reducir el espacio entre elementos de la lista */
+        margin-bottom: 5px; /* Añadir un poco de espacio vertical si se envuelven */
+    }
+
+    .search-and-cart {
+        width: 100%; /* Ocupa el ancho completo */
+        justify-content: center; /* Centra el contenido si hay espacio, o simplemente alinea */
+        margin-top: 10px; /* Separación del menú */
+    }
+
+    .search-and-cart input[type="text"] {
+        flex-grow: 1; /* Permite que el campo de búsqueda se expanda */
+        max-width: 300px; /* Limita el ancho máximo para que no sea excesivo */
+    }
+    
+    main, main.cart-page, .contact-page-main, .products-page-main {
+        padding: 20px 2.5%;
+    }
+    
+    .hero-text h2 {
+        font-size: 2em;
+    }
+
+    .footer-content {
+        flex-direction: column;
+    }
+}
