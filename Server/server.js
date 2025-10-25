@@ -2,7 +2,7 @@
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const mercadopago = require('mercadopago/lib/mercadopago');
+const mercadopago = require('mercadopago').default;
 
 const app = express();
 const PORT = 3000;
@@ -15,25 +15,7 @@ const PORT = 3000;
 require('dotenv').config({ path: path.resolve(__dirname, '.env') }); 
 let accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
 
-// *** FALLBACK LOGIC: If dotenv failed, try to read the file manually ***
-if (!accessToken && process.env.NODE_ENV !== 'production') {
-    console.warn("WARN: dotenv failed to load the token. Attempting manual file read...");
-    try {
-        const fs = require('fs');
-        const envPath = path.resolve(__dirname, '.env');
-        const envContent = fs.readFileSync(envPath, 'utf8');
-        
-        // Simple manual parsing
-        const match = envContent.match(/^MERCADO_PAGO_ACCESS_TOKEN=(.*)$/m);
-        if (match && match[1]) {
-            accessToken = match[1].trim();
-            console.log("SUCCESS: Token loaded using manual file reading fallback.");
-        }
-    } catch (e) {
-        console.error("CRITICAL ERROR: Manual reading of .env file also failed.", e.message);
-    }
-}
-// ============================================================================
+
 
 
 // Configuration of middlewares
