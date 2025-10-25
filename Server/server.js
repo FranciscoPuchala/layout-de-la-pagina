@@ -53,13 +53,11 @@ if (!tokenLoaded) {
 
 // **--- SIMULACIÓN DE BASE DE DATOS (BD) ---**
 const productsDB = [
-    { id: iphone16promax, name: " iPhone 16", price: 1.299 },
-    { id: iPhoneSE, name: "iPhone SE", price: 429 },
-    { id: iPadPro, name: "iPad Pro", price: 799 },
-    { id: MacBookAir15, name: "MacBook Air 15''", price: 1299 },
-    { id: AppleWatchSeries10, name: " Apple Watch Series 10", price: 499 },
-    { id: AirPodsPro, name: "AirPods Pro", price: 249 },
-    { id: CargadorMagSafe, name: "CargadorMagSafe", price: 39 },
+    { id: 1, name: "iPhone 16 Pro Max", price: 1299.00 }, // ID numérico
+    { id: 2, name: "iPad Pro", price: 799.00 },
+    { id: 3, name: "Apple Watch Ultra 2", price: 799.00 },
+    { id: 4, name: "Funda de Silicona", price: 49.00 },
+    { id: 5, name: "Cargador MagSafe", price: 39.00 },
 ];
 // **----------------------------------------**
 
@@ -84,7 +82,7 @@ app.post('/create_preference', (req, res) => {
 
     // Lógica para validar y calcular el total de los items
     cart.forEach(product => {
-        const dbProduct = productsDB.find(p => p.id === product.id);
+        const dbProduct = productsDB.find(p => p.id === parseInt(product.id));
         if (dbProduct) {
             const quantity = product.quantity > 0 ? product.quantity : 1;
             const unitPrice = parseFloat(dbProduct.price);

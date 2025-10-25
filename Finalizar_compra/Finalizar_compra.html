@@ -35,12 +35,16 @@
             <section class="payment-options">
                 <h3>Elige tu método de pago</h3>
                 
-                <!-- Opción 1: Mercado Pago -->
-                <div class="payment-method" id="mp-option">
-                    <h4>Mercado Pago</h4>
-                    <p>Paga con tarjeta de débito, crédito o dinero en tu cuenta de Mercado Pago de forma segura.</p>
-                    <!-- Este contenedor es donde la API de Mercado Pago renderizará el botón de pago -->
-                    <div id="wallet_container"></div>
+                <div class="payment-option selected" id="mp-option">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Mercado_Pago_Logo.png" alt="Logo de Mercado Pago" class="payment-logo">
+                    <h4>Pagar con Mercado Pago</h4>
+                </div>
+
+                <!-- Detalles de Mercado Pago (Se muestra al seleccionar) -->
+                <div id="mp-details" class="payment-details-content">
+                    <p>Serás redirigido a la plataforma segura de Mercado Pago para completar tu pago con tarjeta de crédito, débito o dinero en cuenta.</p>
+                    <!-- BOTÓN CLAVE: Llama a la lógica de Mercado Pago -->
+                    <button id="pay-mp-button" class="confirm-purchase-button">Pagar con Mercado Pago</button>
                 </div>
                 
                 <!-- Opción 2: Transferencia Bancaria -->
