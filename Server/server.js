@@ -7,7 +7,7 @@ const cors = require('cors');
 const mercadopago = require('mercadopago');
 
 const app = express();
-const PORT = 3000;
+const PORT = 4000;
 
 // ============================================================================
 // 1. ENVIRONMENT VARIABLE LOADING (Forced Loading and Fallback)
