@@ -54,9 +54,12 @@ if (!tokenLoaded) {
 // **--- SIMULACIÓN DE BASE DE DATOS (BD) ---**
 const productsDB = [
     { id: iphone16promax, name: " iPhone 16", price: 1.299 },
-    { id: 2, name: "Producto 2", price: 5.75 },
-    { id: 3, name: "Producto 3", price: 20.00 },
-    
+    { id: iPhoneSE, name: "iPhone SE", price: 429 },
+    { id: iPadPro, name: "iPad Pro", price: 799 },
+    { id: MacBookAir15, name: "MacBook Air 15''", price: 1299 },
+    { id: AppleWatchSeries10, name: " Apple Watch Series 10", price: 499 },
+    { id: AirPodsPro, name: "AirPods Pro", price: 249 },
+    { id: CargadorMagSafe, name: "CargadorMagSafe", price: 39 },
 ];
 // **----------------------------------------**
 
