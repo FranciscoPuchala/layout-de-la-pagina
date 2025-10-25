@@ -2,7 +2,9 @@
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const mercadopago = require('mercadopago').default;
+// Importamos el SDK de Mercado Pago. En la versión v2.x.x,
+// este objeto contiene el constructor 'MercadoPagoConfig'.
+const mercadopago = require('mercadopago');
 
 const app = express();
 const PORT = 3000;
@@ -11,11 +13,9 @@ const PORT = 3000;
 // 1. ENVIRONMENT VARIABLE LOADING (Forced Loading and Fallback)
 // ============================================================================
 
-// Try to use dotenv with absolute path first (standard, robust way)
+// Intentamos usar dotenv con ruta absoluta (manera estándar y robusta)
 require('dotenv').config({ path: path.resolve(__dirname, '.env') }); 
 let accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
-
-
 
 
 // Configuration of middlewares
@@ -32,48 +32,57 @@ console.log("Server File Path (__dirname):", __dirname);
 console.log("--------------------");
 // **********************************
 
+// Declaramos la variable del cliente de Mercado Pago
+let mpClient; 
 
 if (!tokenLoaded) {
     console.error("ERROR: MERCADO_PAGO_ACCESS_TOKEN not found. Please check your .env file and its content!");
 } else {
-    // If the token was loaded correctly, configure MP.
-    mercadopago.configure({
-        access_token: accessToken,
+    // 🛑 SOLUCIÓN para SDK v2.x.x: Crear una instancia de cliente.
+    
+    // Desestructuramos el constructor de la librería importada
+    const { MercadoPagoConfig } = mercadopago;
+    
+    // Creamos la nueva instancia del cliente de Mercado Pago
+    mpClient = new MercadoPagoConfig({ 
+        accessToken: accessToken, 
     });
-    console.log("Mercado Pago configured correctly.");
+
+    console.log("Mercado Pago configured correctly using new client instance.");
 }
 
-
 // **--- SIMULACIÓN DE BASE DE DATOS (BD) ---**
-const productsDatabase = [
-    // Product examples (Ensure IDs and prices match your frontend)
-    { id: "iphone-15", price: 1200.00, name: "iPhone 15 Pro (Simulado)", image: "..." },
-    { id: "samsung-s23", price: 950.00, name: "Samsung Galaxy S23 (Simulado)", image: "..." },
-    { id: "airpods-pro", price: 250.00, name: "AirPods Pro (Simulado)", image: "..." },
-    { id: "smartwatch", price: 150.00, name: "Smartwatch Deportivo (Simulado)", image: "..." },
+const productsDB = [
+    { id: 1, name: "Producto 1", price: 10.50 },
+    { id: 2, name: "Producto 2", price: 5.75 },
+    { id: 3, name: "Producto 3", price: 20.00 },
 ];
+// **----------------------------------------**
 
 
-// **--- ROUTE TO CREATE PAYMENT PREFERENCE ---**
-// Receives an array of purchased products from the frontend
+// 3. Health Check
+app.get('/', (req, res) => {
+    res.send('Mercado Pago Server is running!');
+});
+
+
+// 4. Endpoint para crear la preferencia de pago
 app.post('/create_preference', (req, res) => {
+    const cart = req.body.cart || [];
     
-    // If the token was not configured, stop execution
-    if (!tokenLoaded) {
-        return res.status(503).json({ error: "The server could not initialize the Mercado Pago token." });
+    // ⚠️ Validación crucial: Si el cliente MP no se inicializó, devolvemos error 503
+    if (!tokenLoaded || !mpClient) {
+        return res.status(503).json({ error: "The server could not initialize the Mercado Pago token. Check server logs." });
     }
 
-    // 1. Validate and build items for Mercado Pago
-    const cart = req.body; 
     let preferenceItems = [];
     let totalAmount = 0;
 
-    cart.forEach(cartItem => {
-        // Look up the product in your "database" to get the real price and name
-        const dbProduct = productsDatabase.find(p => p.id === cartItem.id);
-        const quantity = parseInt(cartItem.quantity);
-
-        if (dbProduct && quantity > 0) {
+    // Lógica para validar y calcular el total de los items
+    cart.forEach(product => {
+        const dbProduct = productsDB.find(p => p.id === product.id);
+        if (dbProduct) {
+            const quantity = product.quantity > 0 ? product.quantity : 1;
             const unitPrice = parseFloat(dbProduct.price);
             totalAmount += unitPrice * quantity;
             
@@ -93,7 +102,7 @@ app.post('/create_preference', (req, res) => {
     let preference = {
         items: preferenceItems,
         back_urls: {
-            // Ensure these return URLs are also from your Live Server (127.0.0.1:5500)
+            // Asegúrate de que estas URLs de retorno también son de tu Live Server (127.0.0.1:5500)
             "success": "http://127.0.0.1:5500/Finalizar_compra/pago-exitoso.html",
             "failure": "http://127.0.0.1:5500/Finalizar_compra/pago-fallido.html",
             "pending": "http://127.0.0.1:5500/Finalizar_compra/pago-pendiente.html"
@@ -101,20 +110,20 @@ app.post('/create_preference', (req, res) => {
         auto_return: "approved", 
     };
 
-    mercadopago.preferences.create(preference)
+    // 🛑 USAMOS LA INSTANCIA DEL CLIENTE MP para llamar al método create
+    mpClient.preferences.create(preference)
         .then(function (response) {
             res.json({ id: response.body.id });
         })
         .catch(function (error) {
-            console.error("Error creating MP preference:", error.message);
-            res.status(500).json({ 
-                error: "Error creating payment preference.",
-                details: error.message 
-            });
+            console.error("Error creating MP preference:", error);
+            res.status(500).json({ error: "Error creating Mercado Pago preference." });
         });
 });
 
-// **--- START SERVER ---**
+
+// 5. Start the server
 app.listen(PORT, () => {
-    console.log(`Express server listening on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`Access the backend at http://localhost:${PORT}`);
 });
