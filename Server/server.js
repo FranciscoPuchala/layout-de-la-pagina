@@ -53,9 +53,10 @@ if (!tokenLoaded) {
 
 // **--- SIMULACIÓN DE BASE DE DATOS (BD) ---**
 const productsDB = [
-    { id: 1, name: "Producto 1", price: 10.50 },
+    { id: iphone16promax, name: " iPhone 16", price: 1.299 },
     { id: 2, name: "Producto 2", price: 5.75 },
     { id: 3, name: "Producto 3", price: 20.00 },
+    
 ];
 // **----------------------------------------**
 
