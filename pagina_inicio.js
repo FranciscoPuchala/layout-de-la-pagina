@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mapeo de IDs de producto a sus URLs de imagen.
     // Se corrige el path para que sea relativo al carrito y a la pagina de producto.
     const productImageMap = {
-        'iphone16promax': '../img/iphone-16-pro-max-1_6EFF873F24804524AAB5AAD8389E9913.jpg',
-        'ipadpro': '../img/D_NQ_NP_758447-MLA46975173385_082021-O.webp',
-        'applewatchultra2': '../img/D_Q_NP_2X_882490-MLU77852262960_072024-P.webp',
-        'funda_silicona': '../img/images (3).jpeg',
-        'cargador_magsafe': '../img/D_NQ_NP_692212-MLU70775490991_072023-O.webp'
+        '1': '../img/iphone-16-pro-max-1_6EFF873F24804524AAB5AAD8389E9913.jpg',
+        '2': '../img/D_NQ_NP_758447-MLA46975173385_082021-O.webp',
+        '3': '../img/D_Q_NP_2X_882490-MLU77852262960_072024-P.webp',
+        '4': '../img/images (3).jpeg',
+        '5': '../img/D_NQ_NP_692212-MLU70775490991_072023-O.webp'
     };
 
     // Función para mostrar una notificación temporal al usuario.
@@ -132,10 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 "Diseño premium"
             ];
             
-            if (productId === 'iphone16promax') {
+            if (productId === '1') {
                  productDescription = "El iPhone 16 Pro Max, con el chip A-Biónico de última generación y sistema de cámara Pro, ofrece un rendimiento sin precedentes.";
                  productFeatures = ["Chip A-Biónico", "Pantalla ProMotion", "Sistema de cámara triple de 48MP"];
-            } else if (productId === 'funda_silicona') {
+            } else if (productId === '4') {
                  productDescription = "Funda de silicona con MagSafe. Suave al tacto y diseñada para proteger tu iPhone de caídas y rasguños.";
                  productFeatures = ["Material de silicona", "Compatible con MagSafe", "Interior de microfibra"];
             }

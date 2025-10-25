@@ -93,25 +93,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 productImage = imgElement.src;
             } else {
                 // Caso 2: Si la imagen está definida con un DIV y fondo CSS (productos como iPhone)
-                if (productId === 'iphone16promax') {
+                if (productId === '1') {
                     // Ruta hardcodeada según la configuración en productos_style.css para .first-image
                     productImage = '../img/iphone-16-pro-max-1_6EFF873F24804524AAB5AAD8389E9913.jpg';
-                } else if (productId === 'iphonese') {
+                } else if (productId === '8') {
                     // Ruta hardcodeada según la configuración en productos_style.css para .second-image
                     productImage = '../img/descarga.avif';
-                }else if (productId === 'ipadpro') {
+                }else if (productId === '2') {
                     // Ruta hardcodeada según la configuración en productos_style.css para .second-image
                     productImage = '../img/D_NQ_NP_758447-MLA46975173385_082021-O.webp';
-                }else if (productId === 'macbookair15') {
+                }else if (productId === '6') {
                     // Ruta hardcodeada según la configuración en productos_style.css para .second-image
                     productImage = '../img/D_NQ_NP_977736-MLA83571171203_042025-O.webp';
-                }else if (productId === 'applewatchseries10') {
+                }else if (productId === '3') {
                     // Ruta hardcodeada según la configuración en productos_style.css para .second-image
                     productImage = '../img/D_Q_NP_2X_882490-MLU77852262960_072024-P.webp';
-                }else if (productId === 'airpodspro') {
+                }else if (productId === '7') {
                     // Ruta hardcodeada según la configuración en productos_style.css para .second-image
                     productImage = '../img/apple-airpods-pro-segunda-generacion.jpg';
-                }else if (productId === 'cargador_magsafe') {
+                }else if (productId === '5') {
                     // Ruta hardcodeada según la configuración en productos_style.css para .second-image
                     productImage = '../img/D_NQ_NP_692212-MLU70775490991_072023-O.webp';
                 }
@@ -128,25 +128,25 @@ document.addEventListener('DOMContentLoaded', () => {
             let productFeatures;
             
             // Se corrige el ID del iPhone 16 Pro Max para que coincida con el data-id del HTML
-            if (productId === "iphone16promax") { 
+            if (productId === "1") { 
                 productDescription = "El iPhone más potente y sofisticado hasta la fecha. Con una pantalla más grande, cámaras de nivel profesional y un rendimiento inigualable.";
                 productFeatures = ["Cámara principal de 50 MP", "Pantalla OLED de 6.7\" con ProMotion", "Batería de larga duración", "Cuerpo de titanio"];
-            } else if (productId === "iphonese") {
+            } else if (productId === "8") {
                 productDescription = "El iPhone SE combina el chip A15 Bionic, 5G, gran autonomía y un diseño robusto en un solo dispositivo.";
                 productFeatures = ["Chip A15 Bionic", "Conectividad 5G ultrarrápida", "Gran autonomía de batería", "Botón de inicio con Touch ID"];
-            } else if (productId === "ipadpro") {
+            } else if (productId === "2") {
                 productDescription = "El iPad Pro es el lienzo y el cuaderno más versátiles del mundo.";
                 productFeatures = ["Chip M4 ultrarrápido", "Pantalla Liquid Retina XDR", "Sistema de cámara avanzado"];
-            } else if (productId === "macbookair15") {
+            } else if (productId === "6") {
                 productDescription = "El MacBook Air 15'' es increíblemente fino, potente y perfecto para cualquier tarea.";
                 productFeatures = ["Chip M3", "Pantalla Liquid Retina de 15.3 pulgadas", "Batería de hasta 18 horas"];
-            } else if (productId === "applewatchseries10") {
+            } else if (productId === "3") {
                 productDescription = "El Apple Watch Series 10 te ayuda a mantenerte activo, sano y conectado.";
                 productFeatures = ["Pantalla más grande", "Nuevas funciones de salud", "Detección de accidentes"];
-            } else if (productId === "airpodspro") {
+            } else if (productId === "7") {
                 productDescription = "Los AirPods Pro ofrecen cancelación de ruido, sonido envolvente y un ajuste cómodo.";
                 productFeatures = ["Cancelación activa de ruido", "Modo de sonido ambiente adaptable", "Audio espacial personalizado"];
-            } else if (productId === "cargador_magsafe") {
+            } else if (productId === "5") {
                 productDescription = "El Cargador MagSafe simplifica la carga inalámbrica.";
                 productFeatures = ["Carga rápida inalámbrica", "Imanes perfectamente alineados", "Diseño compacto"];
             } else {
