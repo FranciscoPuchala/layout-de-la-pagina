@@ -92,7 +92,8 @@ const handlePaymentConfirmation = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 // 🚀 CAMBIO AQUÍ: Enviamos el contenido real del carrito.
-                body: JSON.stringify({ items: cart }) 
+                // finalizar_compra.js: L-94 (Correcto)
+            body: JSON.stringify({ cart: cart })
             });
 
             if (!response.ok) {
