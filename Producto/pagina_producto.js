@@ -5,18 +5,39 @@ const productImageElement = document.getElementById('product-image'); // Element
 
 // Función para mostrar una notificación temporal al usuario.
 const showNotification = (message) => {
-    const notification = document.createElement('div');
+    // Intenta encontrar un contenedor de notificación existente o crea uno
+    let notification = document.getElementById('cart-notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'cart-notification';
+        // Añadir estilos básicos para que sea visible (deberías complementarlo con CSS)
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateY(-50px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        `;
+        document.body.appendChild(notification);
+    }
+    
+    // Actualizar mensaje y mostrar
     notification.textContent = message;
-    notification.className = 'notification-message';
-    document.body.appendChild(notification);
+    notification.style.opacity = '1';
+    notification.style.transform = 'translateY(0)';
 
-    // Hace que la notificación desaparezca después de 2 segundos.
+    // Ocultar la notificación después de 3 segundos
     setTimeout(() => {
-        notification.classList.add('fade-out');
-        notification.addEventListener('transitionend', () => {
-            notification.remove();
-        });
-    }, 2000);
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-50px)';
+    }, 3000);
 };
 
 // Función para actualizar el contador del carrito en el encabezado.

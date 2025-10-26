@@ -1,158 +1,165 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Seleccionar los elementos del DOM.
-    const productCards = document.querySelectorAll('.product-card');
-    const addToCartButtons = document.querySelectorAll('.add-to-cart');
-    const cartButton = document.querySelector('.cart-button');
+// Archivo: pagina_inicio.js
+// Este script maneja la lógica de añadir productos al carrito desde la página de inicio, 
+// asegurando que se guarden todos los datos necesarios, incluyendo la imagen, para el carrito.
 
-    // Mapeo de IDs de producto a sus URLs de imagen.
-    // Se corrige el path para que sea relativo al carrito y a la pagina de producto.
-    const productImageMap = {
-        '1': '../img/iphone-16-pro-max-1_6EFF873F24804524AAB5AAD8389E9913.jpg',
-        '2': '../img/D_NQ_NP_758447-MLA46975173385_082021-O.webp',
-        '3': '../img/D_Q_NP_2X_882490-MLU77852262960_072024-P.webp',
-        '4': '../img/images (3).jpeg',
-        '5': '../img/D_NQ_NP_692212-MLU70775490991_072023-O.webp'
-    };
+// Mapeo de IDs de producto a sus URLs de imagen.
+// Estos paths son CRÍTICOS para que las imágenes se muestren correctamente en el carrito.
+const productImageMap = {
+    '1': '../img/iphone-16-pro-max-1_6EFF873F24804524AAB5AAD8389E9913.jpg',
+    '2': '../img/D_NQ_NP_758447-MLA46975173385_082021-O.webp',
+    '3': '../img/D_Q_NP_2X_882490-MLU77852262960_072024-P.webp',
+    '4': '../img/images (3).jpeg',
+    '5': '../img/D_NQ_NP_692212-MLU70775490991_072023-O.webp'
+};
 
-    // Función para mostrar una notificación temporal al usuario.
-    const showNotification = (message) => {
-        const notification = document.createElement('div');
-        notification.textContent = message;
-        // Se añade estilo CSS inline para la notificación
+// Función para mostrar una notificación temporal al usuario.
+const showNotification = (message) => {
+    // Intenta encontrar un contenedor de notificación existente o crea uno
+    let notification = document.getElementById('cart-notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'cart-notification';
+        // Añadir estilos básicos para que sea visible (deberías complementarlo con CSS)
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #38c172;
+            background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
             z-index: 1000;
-            opacity: 0.95;
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateY(-50px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         `;
         document.body.appendChild(notification);
+    }
+    
+    // Actualizar mensaje y mostrar
+    notification.textContent = message;
+    notification.style.opacity = '1';
+    notification.style.transform = 'translateY(0)';
 
-        // Oculta la notificación después de 2 segundos.
-        setTimeout(() => {
-            notification.style.transform = 'translateY(-20px)';
-            notification.style.opacity = '0';
-            notification.addEventListener('transitionend', () => {
-                notification.remove();
-            });
-        }, 2000);
-    };
+    // Ocultar la notificación después de 3 segundos
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-50px)';
+    }, 3000);
+};
 
-    /// Función para actualizar el contador del carrito en el encabezado.
-    const updateCartCount = () => {
-        // Obtiene el carrito de localStorage; si no existe, usa un array vacío.
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        // Calcula el total de artículos sumando las cantidades de cada producto.
-        const totalItems = cart.reduce((sum, product) => sum + product.quantity, 0);
-        // Actualiza el texto del botón del carrito con el nuevo total.
+// Función para actualizar el contador del carrito en el encabezado.
+const updateCartCount = () => {
+    // Intenta obtener el carrito. Si no existe, usa un array vacío.
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((sum, product) => sum + product.quantity, 0);
+    const cartButton = document.querySelector('.cart-button');
+
+    if (cartButton) {
         cartButton.textContent = `🛒 Carrito (${totalItems})`;
-    };
+    }
+    return totalItems; // Retorna el total por si acaso
+};
 
-    // Inicializar el contador del carrito al cargar la página.
-    updateCartCount();
+// Función para añadir un producto al carrito en localStorage
+// Se añade 'imageURL' como nuevo parámetro.
+const addToCart = (productId, name, price, imageURL) => {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const productIndex = cart.findIndex(item => item.id === productId);
 
-    // --- Lógica para añadir productos al carrito (Botón) ---
-    addToCartButtons.forEach(button => {
+    if (productIndex > -1) {
+        // El producto ya está en el carrito, incrementa la cantidad
+        cart[productIndex].quantity += 1;
+    } else {
+        // El producto es nuevo, añádelo
+        const newProduct = {
+            id: productId,
+            name: name,
+            price: price, 
+            image: imageURL, // CRÍTICO: Guardamos la URL de la imagen
+            quantity: 1,
+        };
+        cart.push(newProduct);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount(); // Actualiza el contador visible
+    // 🛑 RESTAURADO: Muestra la notificación al usuario
+    showNotification(`✅ "${name}" añadido al carrito.`); 
+    console.log(`Producto añadido: ${name} (ID: ${productId}, Imagen: ${imageURL})`);
+};
+
+
+// Inicializa los listeners de los botones "Añadir al carrito" y los productos
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCount(); // Inicializa el contador al cargar la página
+
+    // 1. Manejar clics en los botones "Añadir al carrito"
+    document.querySelectorAll('.add-to-cart').forEach(button => {
         button.addEventListener('click', (event) => {
-            // Detiene la propagación y previene la navegación del enlace.
-            event.stopPropagation();
-            event.preventDefault();
+            event.preventDefault(); // Detiene la navegación del enlace
 
-            const productCard = button.closest('.product-card');
+            const productCard = event.target.closest('.product-card');
 
-            // Recolectar la información del producto.
-            const productId = productCard.dataset.id;
-            const productName = productCard.querySelector('h3').textContent;
-            const productPriceText = productCard.querySelector('.price').textContent;
+            if (productCard) {
+                // Captura los datos CRÍTICOS para el servidor
+                const productId = productCard.getAttribute('data-id');
+                const productName = productCard.querySelector('h3').textContent.trim();
+                
+                // Limpia y convierte el precio a un número decimal (CRÍTICO)
+                const priceElement = productCard.querySelector('.price').textContent.trim();
+                const productPrice = parseFloat(priceElement.replace('$', '')); 
+                
+                // CRÍTICO: Obtiene la URL de la imagen del mapa
+                const productImage = productImageMap[productId];
 
-            // CORRECCIÓN: Eliminar el punto (separador de miles) antes de convertir a número.
-            const cleanedPriceText = productPriceText.replace('$', '').replace('.', '');
-            const productPrice = parseFloat(cleanedPriceText);
 
-            // **OBTENCIÓN DE IMAGEN MODIFICADA:** // Usa el mapa para obtener la URL.
-            let productImage = productImageMap[productId];
-            if (!productImage) {
-                const imgElement = productCard.querySelector('img');
-                productImage = imgElement ? imgElement.src : 'placeholder.jpg';
+                if (productId && productName && !isNaN(productPrice) && productImage) {
+                    // Llama a addToCart incluyendo la URL de la imagen
+                    addToCart(productId, productName, productPrice, productImage);
+                } else {
+                    console.error('Error al capturar datos del producto para el carrito:', { productId, productName, productPrice, productImage });
+                    // NOTA: Se evita el alert aquí ya que la notificación es mejor.
+                }
             }
-
-            const productToAdd = {
-                id: productId,
-                name: productName,
-                price: productPrice,
-                image: productImage,
-            };
-
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-            const existingProductIndex = cart.findIndex(item => item.id === productToAdd.id);
-
-            if (existingProductIndex !== -1) {
-                cart[existingProductIndex].quantity += 1;
-            } else {
-                cart.push({ ...productToAdd, quantity: 1 });
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartCount();
-            showNotification(`${productName} ha sido añadido al carrito.`);
         });
     });
 
-    // --- Lógica para la navegación a la página de producto (Clic en tarjeta) ---
-    productCards.forEach(card => {
-        card.addEventListener('click', () => {
-            // Recolectar toda la información del producto.
-            const productId = card.dataset.id;
-            const productName = card.querySelector('h3').textContent;
-            const productPriceText = card.querySelector('.price').textContent;
+    // 2. Manejar clics en las tarjetas de producto (para mantener la función de redirección a la página de detalle)
+    document.querySelectorAll('.product-card').forEach(card => {
+        // Excluimos el botón "Añadir al carrito" para que no dispare la redirección
+        const addToCartButton = card.querySelector('.add-to-cart');
+        if (addToCartButton) {
+            // Aseguramos que el clic en la tarjeta solo redirija si no es el botón de añadir al carrito
+            card.addEventListener('click', (event) => {
+                if (event.target !== addToCartButton) {
+                    const productId = card.getAttribute('data-id');
+                    const productName = card.querySelector('h3').textContent.trim();
+                    const priceElement = card.querySelector('.price').textContent.trim();
+                    const productPrice = parseFloat(priceElement.replace('$', ''));
+                    const productImage = productImageMap[productId];
 
-            // CORRECCIÓN: Eliminar el punto (separador de miles) antes de convertir a número.
-            const cleanedPriceText = productPriceText.replace('$', '').replace('.', '');
-            const productPrice = parseFloat(cleanedPriceText);
-
-            // **OBTENCIÓN DE IMAGEN MODIFICADA:** Usa el mapa o la etiqueta <img>.
-            let productImage = productImageMap[productId];
-            if (!productImage) {
-                const imgElement = card.querySelector('img');
-                productImage = imgElement ? imgElement.src : 'placeholder.jpg';
-            }
-
-            // Datos de ejemplo para la página de detalle
-            let productDescription = "Experimenta el poder inigualable y el diseño de vanguardia. Este producto redefine lo que esperas de la tecnología.";
-            let productFeatures = [
-                "Características estándar",
-                "Integración total con Apple Ecosystem",
-                "Diseño premium"
-            ];
-            
-            if (productId === '1') {
-                 productDescription = "El iPhone 16 Pro Max, con el chip A-Biónico de última generación y sistema de cámara Pro, ofrece un rendimiento sin precedentes.";
-                 productFeatures = ["Chip A-Biónico", "Pantalla ProMotion", "Sistema de cámara triple de 48MP"];
-            } else if (productId === '4') {
-                 productDescription = "Funda de silicona con MagSafe. Suave al tacto y diseñada para proteger tu iPhone de caídas y rasguños.";
-                 productFeatures = ["Material de silicona", "Compatible con MagSafe", "Interior de microfibra"];
-            }
-
-            const selectedProduct = {
-                id: productId,
-                name: productName,
-                price: productPrice,
-                image: productImage, // El nombre del archivo o la URL de placeholder
-                description: productDescription,
-                features: productFeatures
-            };
-
-            // Guarda el producto seleccionado y redirige.
-            localStorage.setItem('selectedProduct', JSON.stringify(selectedProduct));
-            // Redirige a la página de producto.
-            window.location.href = `./Producto/pagina_producto.html`;
-        });
+                    // Prepara y guarda la información del producto seleccionado (como lo hacía tu script original)
+                    if (productId && productName && !isNaN(productPrice) && productImage) {
+                        const selectedProduct = {
+                            id: productId,
+                            name: productName,
+                            price: productPrice,
+                            image: productImage,
+                            // Nota: La descripción y características deben ser añadidas aquí si se usan en la página de producto
+                            description: "Descripción genérica...", 
+                            features: ["Función 1", "Función 2"]
+                        };
+                        
+                        localStorage.setItem('selectedProduct', JSON.stringify(selectedProduct));
+                        // Redirige a la página de producto.
+                        window.location.href = `./Producto/pagina_producto.html`;
+                    } else {
+                        console.error('Error al capturar datos para la redirección a la página de producto.');
+                    }
+                }
+            });
+        }
     });
 });

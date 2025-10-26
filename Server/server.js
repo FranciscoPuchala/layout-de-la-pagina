@@ -3,19 +3,36 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 
-// Importamos el SDK de Mercado Pago y la clase MerchantOrders para la prueba de conexión.
-const { MercadoPagoConfig, Preference, MerchantOrders } = require('mercadopago');
+// Importamos el SDK de Mercado Pago y la clase Preference
+const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 const app = express();
 const PORT = 4000; // El puerto de este servidor Node.js/Express
 
 // ============================================================================
-// 1. ENVIRONMENT VARIABLE LOADING (Forced Loading and Fallback)
+// 1. CONFIGURACIÓN INICIAL
 // ============================================================================
+
+// Middleware para habilitar CORS y parsear JSON
+app.use(cors());
+app.use(express.json());
 
 // Intentamos usar dotenv con ruta absoluta (manera estándar y robusta)
 require('dotenv').config({ path: path.resolve(__dirname, '.env') }); 
 let accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+
+// 🛑 FALLBACK TEMPORAL: Si no se encontró la variable de entorno, usa esta clave de prueba
+// DEBE ser reemplazada por tu clave real en el archivo .env
+if (!accessToken) {
+    console.warn("⚠️ Advertencia: No se encontró MERCADO_PAGO_ACCESS_TOKEN. Usando clave de prueba temporal.");
+    accessToken = "TEST-8800539110036665-061005-961d62c76e46950f555ff48e5ed41a7d-249590685"; // Clave de prueba genérica
+}
+
+const tokenLoaded = !!accessToken;
+
+// 2. Inicialización del cliente de Mercado Pago
+const client = new MercadoPagoConfig({ accessToken, options: { timeout: 5000 } });
+const preferenceService = new Preference(client);
 
 // Base de datos de productos simulada
 // NOTA: Los IDs deben coincidir con los usados en el frontend (pagina_inicio.js, carrito.js)
@@ -27,139 +44,74 @@ const PRODUCTS_DB = [
     { id: '5', name: 'Cargador MagSafe', price: 39 },
 ];
 
-// Configuration of middlewares
-app.use(express.json()); 
-
-// Permite solicitudes solo desde tu Live Server en el puerto 5501.
-app.use(cors({ origin: 'http://127.0.0.1:5501' })); 
-
-// 2. Mercado Pago Access Token Configuration
-const tokenLoaded = !!accessToken;
-
-// *** CRITICAL DEBUG LINE ***
-console.log("--- DEBUG DOTENV ---");
-console.log("Valor de MERCADO_PAGO_ACCESS_TOKEN (Visto por el servidor):", tokenLoaded ? "Token loaded (Length: " + accessToken.length + ")" : "!!! ERROR: Token NOT LOADED or EMPTY !!!");
-console.log("Server File Path (__dirname):", __dirname); 
-console.log("--------------------");
-// **************************
-
-// Verificamos el token de acceso antes de inicializar el cliente MP
-if (!tokenLoaded) {
-    console.error("⛔ FATAL ERROR: MERCADO_PAGO_ACCESS_TOKEN is missing or not loaded. Check your .env file.");
-    accessToken = 'TOKEN_DE_FALLBACK_SI_ENV_FALLA';
-}
-
-// ✅ Cliente configurado correctamente para la versión v2.x.x
-const mpClient = new MercadoPagoConfig({ 
-    accessToken: accessToken,
-    options: { timeout: 5000 } // Añadimos un timeout para robustez
-});
-
-// ✅ Instancia de MerchantOrders para la prueba de conexión
-
-
 
 // ============================================================================
-// 3. RUTAS
+// 3. RUTAS API
 // ============================================================================
 
-// Endpoint principal para pruebas de estado
-app.get('/', (req, res) => {
-    res.send(`Servidor de backend de iPlace está corriendo. Puerto: ${PORT}. Token MP cargado: ${tokenLoaded}`);
-});
+// Ruta para crear la preferencia de pago de Mercado Pago
+app.post('/create_preference', (req, res) => {
+    // El cliente envía el carrito en la propiedad 'cart'
+    const clientCart = req.body.cart; 
 
-// NUEVO ENDPOINT PARA PROBAR LA CONEXIÓN CON EL ACCESS TOKEN
-app.get('/test_connection', async (req, res) => {
-    console.log("🔎 Ejecutando prueba de conexión con Mercado Pago...");
-    if (!tokenLoaded) {
-        return res.status(500).send("ERROR: Access Token no cargado. Revisa el archivo .env.");
+    if (!clientCart || clientCart.length === 0) {
+        return res.status(400).json({ error: 'Contenido de pago no encontrado.' });
     }
 
+    const itemsForMP = [];
+    
+    // 🛑 MEJORA DE ROBUSTEZ: Usamos un bucle para una mejor gestión de errores de sincronización
     try {
-        // Intentamos buscar una Merchant Order que sabemos que no existe (ID 1)
-        // Si el token es válido, esto debe resultar en un 404/400 pero no en un 401/403.
-        await merchantOrdersService.get({ id: "1" }); 
-        
-        // Si llegamos aquí, algo extraño pasó o la orden 1 existe, pero la conexión fue exitosa
-        res.send("✅ Conexión con Mercado Pago API exitosa. Se pudo realizar una solicitud de prueba.");
-    } catch (error) {
-        if (error.status === 401 || error.status === 403) {
-            console.error("❌ ERROR DE AUTENTICACIÓN (401/403):", error.message);
-            res.status(401).send("❌ ERROR: El Access Token de Mercado Pago es inválido, ha expirado o no tiene permisos.");
-        } else if (error.status === 404) {
-             // Esto es una respuesta normal al buscar algo que no existe. La conexión es VÁLIDA.
-             res.send("✅ Conexión con Mercado Pago API exitosa. La solicitud de prueba regresó un 404 (esperado).");
-        }
-        else {
-            console.error("❌ ERROR DESCONOCIDO DE CONEXIÓN:", error.message);
-            res.status(500).send(`⚠️ Error al probar la conexión con MP: ${error.message}. Revisa la consola del servidor.`);
-        }
-    }
-});
-
-
-// Endpoint para crear la preferencia de pago
-app.post('/create_preference', async (req, res) => {
-    const cart = req.body.cart; // El carrito enviado desde el frontend
-
-    if (!cart || cart.length === 0) {
-        return res.status(400).json({ error: "Cart data is missing or empty." });
-    }
-
-    let preferenceItems = [];
-    let totalAmount = 0;
-
-    // Procesar el carrito y validar contra la "base de datos"
-    for (const cartItem of cart) { // Usamos 'for...of' para poder usar 'return' en caso de error
-        const dbProduct = PRODUCTS_DB.find(p => p.id === cartItem.id);
-        const quantity = cartItem.quantity;
-
-        // 🛑 Validamos la existencia del producto
-        if (!dbProduct) {
-            console.error(`❌ Producto con ID ${cartItem.id} no encontrado en PRODUCTS_DB. Deteniendo solicitud.`);
-            return res.status(400).json({ error: `Producto con ID ${cartItem.id} no encontrado. Error de sincronización.` });
-        }
-        
-        // 🛑 CORRECCIÓN CLAVE: Forzar el precio a un número decimal con dos decimales (formato de API)
-        const unitPriceFloat = parseFloat(dbProduct.price).toFixed(2);
-        const unitPrice = parseFloat(unitPriceFloat); // Convertir de vuelta a number para cálculos locales
-        
-        if (isNaN(unitPrice) || unitPrice <= 0) {
-            console.error(`❌ Precio inválido para el producto con ID ${cartItem.id}. Precio: ${unitPrice}`);
-            return res.status(400).json({ error: `El precio para el producto ${dbProduct.name} es inválido.` });
-        }
-
-        if (quantity > 0) {
-            totalAmount += unitPrice * quantity;
+        for (const clientItem of clientCart) {
             
-            preferenceItems.push({
-                title: dbProduct.name,
-                // Usamos el precio en formato float/string para la API de Mercado Pago
-                unit_price: unitPrice, 
-                quantity: quantity,
+            const itemId = clientItem.id;
+            const itemQuantity = parseInt(clientItem.quantity, 10); // Intentamos parsear la cantidad inmediatamente
+
+            // 1. Validar la estructura del ítem del cliente
+            // Debe tener ID y la cantidad debe ser un número entero positivo
+            if (!itemId || isNaN(itemQuantity) || itemQuantity <= 0) {
+                 // Lanzamos un error más específico para ayudar a depurar el frontend
+                 throw new Error(`Item de carrito inválido o incompleto: ID=${itemId || 'Falta ID'}, Cantidad=${clientItem.quantity || 'Inválida'}`);
+            }
+
+            // 2. Sincronizar con la base de datos del servidor para obtener el precio y nombre
+            const serverProduct = PRODUCTS_DB.find(p => p.id === itemId);
+
+            if (!serverProduct) { 
+                // Si un producto no se encuentra en el servidor, detenemos el proceso
+                throw new Error(`Producto con ID ${itemId} no encontrado en la base de datos del servidor. Error de sincronización.`);
+            }
+
+            // 3. Construir el objeto de ítem para Mercado Pago (MP)
+            itemsForMP.push({
+                title: serverProduct.name,
+                // MP requiere unit_price y quantity
+                unit_price: parseFloat(serverProduct.price.toFixed(2)), 
+                quantity: itemQuantity, // Usamos la cantidad parseada
+                currency_id: 'USD', // Usamos USD dado los precios de los productos
+                description: serverProduct.name, // Propiedad obligatoria
             });
         }
-    }
-    
-    if (totalAmount <= 0) {
-        return res.status(400).json({ error: "El carrito está vacío o la suma de los productos es cero." });
+    } catch (e) {
+        // Capturamos el error de sincronización y respondemos al cliente
+        console.error(`❌ Error en sincronización/validación del carrito: ${e.message}`);
+        return res.status(400).json({ error: e.message });
     }
 
-    // --- REAL CALL TO MERCADO PAGO API ---
-    let preference = {
-        items: preferenceItems,
+    // 4. Crear el objeto de preferencia para el SDK de Mercado Pago
+    const preference = {
+        items: itemsForMP,
+        // Los back_urls son CRÍTICOS para que MP sepa dónde redirigir al finalizar el pago
         back_urls: {
-            "success": "http://127.0.0.1:5501/Finalizar_compra/pago-exitoso.html",
-            "failure": "http://127.0.0.1:5501/Finalizar_compra/pago-fallido.html",
-            "pending": "http://127.0.0.1:5501/Finalizar_compra/pago-pendiente.html"
+            success: "http://localhost:8080/success", // Cambiar por URLs reales en producción
+            failure: "http://localhost:8080/failure",
+            pending: "http://localhost:8080/pending"
         },
-        auto_return: "approved", 
+        // 🛑 Evitamos auto_return: "approved" para que funcione con el Payment Brick
+        notification_url: "https://your-server-domain.com/notifications", // URL para recibir notificaciones (opcional)
     };
-
-    // ✅ Usamos la clase Preference, pasándole el cliente MP
-    const preferenceService = new Preference(mpClient);
-
-    // ✅ Llamamos al método create, requiriendo que los datos estén dentro de 'body'
+    
+    // 5. Llamada a la API de Mercado Pago
     preferenceService.create({ body: preference })
         .then(function (response) {
             // El ID de la preferencia está directamente en el objeto de respuesta
@@ -176,8 +128,8 @@ app.post('/create_preference', async (req, res) => {
                  if (error.status === 401 || error.status === 403) {
                      errorMessage = "Error de autenticación: El token de Mercado Pago (Access Token) es inválido o no tiene permisos.";
                  } else {
-                     errorMessage = `Error de MP: ${error.message}`;
-                 }
+                     // Si es un error de validación de MP, se lo devolvemos al usuario
+                     errorMessage = `Error de MP: ${error.message}`;}
             }
 
             res.status(500).json({ error: errorMessage });
@@ -190,5 +142,7 @@ app.listen(PORT, () => {
     console.log(`🚀 Servidor de Express corriendo en http://localhost:${PORT}`);
     if (tokenLoaded) {
         console.log("✅ Mercado Pago Client configurado correctamente.");
+    } else {
+        console.warn("⚠️ Usando clave de prueba. Configura tu .env para producción.");
     }
 });

@@ -108,8 +108,8 @@ const handlePaymentConfirmation = () => {
                 currency_id: 'USD', // Asegúrate de usar la moneda correcta (e.g., 'ARS', 'MXN', 'BRL')
             }));
 
-            // 🛑 PASO CLAVE 3: Preparar la solicitud al servidor con el objeto 'items'
-            const requestBody = { items: itemsForMP };
+            // 🛑 CORRECCIÓN CLAVE: El servidor espera { cart: [...] }
+            const requestBody = { cart: itemsForMP };
             
             // Llama al servidor para crear la preferencia de pago, ENVIANDO EL CARRITO
             const response = await fetch('http://localhost:4000/create_preference', {
