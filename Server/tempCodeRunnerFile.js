@@ -3,8 +3,8 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 
-// Importamos el SDK de Mercado Pago y la clase MerchantOrders para la prueba de conexión.
-const { MercadoPagoConfig, Preference, MerchantOrders } = require('mercadopago');
+// Importamos el SDK de Mercado Pago.
+const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 const app = express();
 const PORT = 4000; // El puerto de este servidor Node.js/Express
@@ -46,6 +46,7 @@ console.log("--------------------");
 // Verificamos el token de acceso antes de inicializar el cliente MP
 if (!tokenLoaded) {
     console.error("⛔ FATAL ERROR: MERCADO_PAGO_ACCESS_TOKEN is missing or not loaded. Check your .env file.");
+    // Usamos un token de fallback si el env falla, aunque la operación de pago probablemente fallará
     accessToken = 'TOKEN_DE_FALLBACK_SI_ENV_FALLA';
 }
 
@@ -54,9 +55,6 @@ const mpClient = new MercadoPagoConfig({
     accessToken: accessToken,
     options: { timeout: 5000 } // Añadimos un timeout para robustez
 });
-
-// ✅ Instancia de MerchantOrders para la prueba de conexión
-const merchantOrdersService = new MerchantOrders(mpClient);
 
 
 // ============================================================================
@@ -67,36 +65,6 @@ const merchantOrdersService = new MerchantOrders(mpClient);
 app.get('/', (req, res) => {
     res.send(`Servidor de backend de iPlace está corriendo. Puerto: ${PORT}. Token MP cargado: ${tokenLoaded}`);
 });
-
-// NUEVO ENDPOINT PARA PROBAR LA CONEXIÓN CON EL ACCESS TOKEN
-app.get('/test_connection', async (req, res) => {
-    console.log("🔎 Ejecutando prueba de conexión con Mercado Pago...");
-    if (!tokenLoaded) {
-        return res.status(500).send("ERROR: Access Token no cargado. Revisa el archivo .env.");
-    }
-
-    try {
-        // Intentamos buscar una Merchant Order que sabemos que no existe (ID 1)
-        // Si el token es válido, esto debe resultar en un 404/400 pero no en un 401/403.
-        await merchantOrdersService.get({ id: "1" }); 
-        
-        // Si llegamos aquí, algo extraño pasó o la orden 1 existe, pero la conexión fue exitosa
-        res.send("✅ Conexión con Mercado Pago API exitosa. Se pudo realizar una solicitud de prueba.");
-    } catch (error) {
-        if (error.status === 401 || error.status === 403) {
-            console.error("❌ ERROR DE AUTENTICACIÓN (401/403):", error.message);
-            res.status(401).send("❌ ERROR: El Access Token de Mercado Pago es inválido, ha expirado o no tiene permisos.");
-        } else if (error.status === 404) {
-             // Esto es una respuesta normal al buscar algo que no existe. La conexión es VÁLIDA.
-             res.send("✅ Conexión con Mercado Pago API exitosa. La solicitud de prueba regresó un 404 (esperado).");
-        }
-        else {
-            console.error("❌ ERROR DESCONOCIDO DE CONEXIÓN:", error.message);
-            res.status(500).send(`⚠️ Error al probar la conexión con MP: ${error.message}. Revisa la consola del servidor.`);
-        }
-    }
-});
-
 
 // Endpoint para crear la preferencia de pago
 app.post('/create_preference', async (req, res) => {
