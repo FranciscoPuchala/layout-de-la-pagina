@@ -56,7 +56,7 @@ const mpClient = new MercadoPagoConfig({
 });
 
 // ✅ Instancia de MerchantOrders para la prueba de conexión
-const merchantOrdersService = new MerchantOrders(mpClient);
+
 
 
 // ============================================================================
