@@ -7,7 +7,7 @@ const confirmPurchaseButton = document.querySelector('.confirm-purchase-button')
 
 // ** IMPORTANTE: CLAVE PÚBLICA DE MERCADO PAGO **
 // DEBE usar su clave pública de prueba o producción aquí.
-const MP_PUBLIC_KEY = "TTEST-1c4d6d64-db6d-44ac-b486-13f6195fad11"; 
+const MP_PUBLIC_KEY = "TEST-1c4d6d64-db6d-44ac-b486-13f6195fad11"; 
 
 // 1. Inicialización del SDK de Mercado Pago
 const mp = new MercadoPago(MP_PUBLIC_KEY);
@@ -93,7 +93,7 @@ const handlePaymentConfirmation = () => {
                 headers: { 'Content-Type': 'application/json' },
                 // 🚀 CAMBIO AQUÍ: Enviamos el contenido real del carrito.
                 // finalizar_compra.js: L-94 (Correcto)
-            body: JSON.stringify({ cart: cart })
+                body: JSON.stringify({ cart: cart })
             });
 
             if (!response.ok) {
