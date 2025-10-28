@@ -7,7 +7,7 @@ const confirmPurchaseButton = document.getElementById('pay-mp-button'); // ID co
 
 // ** IMPORTANTE: CLAVE PÚBLICA DE MERCADO PAGO **
 // Aquí va tu Clave Pública (Public Key)
-const MP_PUBLIC_KEY = "TU_CLAVE_PUBLICA_AQUI"; // 🛑 ¡Pon tu clave pública!
+const MP_PUBLIC_KEY = "APP_USR-6dd13bed-0f80-4ddf-b7b6-2382f59895ac"; // 🛑 ¡Pon tu clave pública!
 
 // 1. Inicialización del SDK de Mercado Pago
 const mp = new MercadoPago(MP_PUBLIC_KEY);
