@@ -61,12 +61,26 @@ const updateCartCount = () => {
 // 4. Lógica de selección de métodos de pago (sin cambios funcionales)
 const handlePaymentSelection = () => {
     // Lógica para cambiar la interfaz según el método de pago seleccionado
-    if (mpOption) {
+      if (mpOption) {
         mpOption.addEventListener('click', () => {
             document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
             mpOption.classList.add('selected');
-            document.getElementById('mp-details').style.display = 'block';
-            document.getElementById('transfer-details').style.display = 'none';
+
+            // Check if 'mp-details' element exists before trying to access its style
+            const mpDetails = document.getElementById('mp-details');
+            if (mpDetails) {
+                mpDetails.style.display = 'block';
+            } else {
+                console.warn("Element with ID 'mp-details' not found.");
+            }
+
+            // Check if 'transfer-details' element exists before trying to access its style
+            const transferDetails = document.getElementById('transfer-details');
+            if (transferDetails) {
+                transferDetails.style.display = 'none';
+            } else {
+                console.warn("Element with ID 'transfer-details' not found.");
+            }
         });
     }
 
