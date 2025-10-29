@@ -1,179 +1,119 @@
-// Selecciona los elementos del DOM que vamos a usar
-const totalElement = document.getElementById('total-price');
-const mpOption = document.getElementById('mp-option');
-const transferOption = document.getElementById('transfer-option');
-const cartButton = document.querySelector('.cart-button');
-const confirmPurchaseButton = document.getElementById('pay-mp-button'); // ID correcto del botón
+// Cargar variables de entorno (tu clave secreta)
+require('dotenv').config();
 
-// ** IMPORTANTE: CLAVE PÚBLICA DE MERCADO PAGO **
-// Aquí va tu Clave Pública (Public Key)
-const MP_PUBLIC_KEY = "TEST-1c4d6d64-db6d-44ac-b486-13f6195fad11"; // 🛑 ¡Pon tu clave pública!
+// 1. Importar los "ingredientes"
+const express = require('express');
+const cors = require('cors');
+const { MercadoPagoConfig, Preference } = require('mercadopago');
 
-// 1. Inicialización del SDK de Mercado Pago
-const mp = new MercadoPago(MP_PUBLIC_KEY);
+// 2. Inicializar el servidor
+const app = express();
+const port = 4000;
 
-// Función de utilidad para mostrar mensajes
-const showMessage = (message, isError = false) => {
-    if (isError) {
-        console.error("ERROR: ", message);
-    } else {
-        console.log("INFO: ", message);
-    }
-    alert(message); // Temporal para debugging
+// 3. Configurar el cliente de Mercado Pago
+const client = new MercadoPagoConfig({
+  // Asegúrate de que el token de PRUEBA esté en tu .env con el nombre MP_ACCESS_TOKEN
+  accessToken: process.env.MP_ACCESS_TOKEN, 
+});
+const preference = new Preference(client);
+
+// ===================================================================
+//          ⚡ TU "BASE DE DATOS" DE PRECIOS SEGURA ⚡
+// ===================================================================
+// Precios de referencia de los productos (en UYU - Pesos Uruguayos)
+const masterPriceList = {
+    // ID: { nombre, precio (en UYU) }
+    '1': { name: 'iPhone 16 Pro Max', price: 1299.00 },
+    '2': { name: 'iPad Pro', price: 30000.00 }, 
+    '3': { name: 'Apple Watch Series 10', price: 19000.00 },
+    '4': { name: 'Funda de Silicona', price: 1500.00 },
+    '5': { name: 'Cargador MagSafe', price: 1200.00 },
+    '6': { name: 'MacBook Air 15\'\'', price: 50000.00 },
+    '7': { name: 'AirPods Pro', price: 9500.00 },
+    '8': { name: 'iPhone SE', price: 16500.00 }
 };
+// ===================================================================
 
+// 4. Configurar el servidor (CORS y JSON)
+app.use(cors());
+app.use(express.json());
 
-// 2. Función para actualizar el total del resumen de compra
-const updateCheckoutTotal = () => {
-    const checkoutTotal = localStorage.getItem('checkoutTotal');
-    const subtotalSummary = document.getElementById('subtotal-price');
-    
-    if (checkoutTotal) {
-        totalElement.textContent = `$${checkoutTotal}`;
-        if (subtotalSummary) {
-            subtotalSummary.textContent = `$${checkoutTotal}`;
-        }
-    } else {
-        totalElement.textContent = '$0.00';
-        if (subtotalSummary) {
-            subtotalSummary.textContent = '$0.00';
-        }
+// 5. ¡LA RUTA CLAVE! 
+app.post('/create_preference', async (req, res) => {
+  try {
+    const clientCart = req.body.cart;
+
+    // --- Verificación de Seguridad ---
+    const itemsForMP = [];
+    let serverCalculatedTotal = 0;
+
+    for (const item of clientCart) {
+      const masterProduct = masterPriceList[item.id];
+
+      if (!masterProduct) {
+        console.error(`Intento de pago con ID de producto inválido: ${item.id}`);
+        return res.status(400).json({ error: `Producto inválido detectado: ${item.id}` });
+      }
+
+      // Construimos el item para Mercado Pago usando NUESTROS datos y la moneda UYU
+      itemsForMP.push({
+        title: masterProduct.name,         
+        unit_price: masterProduct.price,   
+        quantity: item.quantity,           
+        currency_id: 'UYU',                // Peso Uruguayo
+      });
+
+      serverCalculatedTotal += masterProduct.price * item.quantity;
     }
-};
+    // --- Fin de la Verificación ---
 
-// 3. Función para actualizar el contador del carrito
-const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const totalItems = cart.reduce((sum, product) => sum + product.quantity, 0);
-    if(cartButton) {
-        cartButton.textContent = `🛒 Carrito (${totalItems})`;
-    }
-};
+    console.log(`Total calculado por el servidor: UYU $${serverCalculatedTotal}`);
+    console.log("Creando preferencia de pago con datos de Payer...");
 
-// 4. Lógica de selección de métodos de pago (sin cambios funcionales)
-const handlePaymentSelection = () => {
-    // ... (Tu lógica original estaba bien, la dejo aquí por completitud) ...
-    if (mpOption) {
-        mpOption.addEventListener('click', () => {
-            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
-            mpOption.classList.add('selected');
-        });
-    }
-
-    if (transferOption) {
-        transferOption.addEventListener('click', () => {
-            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
-            transferOption.classList.add('selected');
-        });
-    }
-};
-
-
-// 5. Función para manejar la confirmación de la compra (¡ACTUALIZADA!)
-const handlePaymentConfirmation = () => {
-    // Asegurarse de que el botón existe antes de añadir el listener
-    if (!confirmPurchaseButton) {
-        console.error("Error: No se encontró el botón #pay-mp-button");
-        return;
-    }
-    
-    confirmPurchaseButton.addEventListener('click', async () => {
-        // Deshabilitar el botón
-        confirmPurchaseButton.textContent = 'Procesando...';
-        confirmPurchaseButton.disabled = true;
-
-        try {
-            
-            // 🛑 PASO CLAVE 1: OBTENER LOS DATOS DEL CARRITO DE localStorage
-            const fullCart = JSON.parse(localStorage.getItem('cart')) || []; 
-            if (fullCart.length === 0) {
-                showMessage('El carrito está vacío. Agrega productos antes de pagar.', true);
-                confirmPurchaseButton.textContent = 'Pagar con Mercado Pago';
-                confirmPurchaseButton.disabled = false;
-                return;
-            }
-
-            // ===================================================================
-            //          ⚡ CAMBIO DE SEGURIDAD ⚡
-            // ===================================================================
-            // Ya NO enviamos el precio. Solo ID y cantidad.
-            // El servidor se encargará de verificar el precio.
-            const itemsForServer = fullCart.map(item => ({
-                id: item.id,
-                quantity: item.quantity,
-            }));
-            
-            // El servidor ahora espera { cart: [{id, quantity}, ...] }
-            const requestBody = { cart: itemsForServer };
-            // ===================================================================
-
-            
-            // Llama al servidor para crear la preferencia de pago
-            const response = await fetch('http://localhost:4000/create_preference', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody), // 🛑 AHORA ENVIAMOS LOS DATOS SEGUROS
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                // Si el servidor detectó un producto inválido, mostrará el error
-                throw new Error(data.error || 'Fallo la creación de la preferencia en el servidor.');
-            }
-
-            const preferenceId = data.id;
-
-            // 6. Inicializar el Payment Brick de Mercado Pago
-            const mpContainer = document.getElementById('payment-button-container');
-
-            if (mpContainer) {
-                 // Ocultar el botón de compra
-                 confirmPurchaseButton.style.display = 'none'; 
-                 // Mostrar el contenedor del Brick
-                 mpContainer.style.display = 'block';
-
-                mp.bricks().create("payment", "payment-button-container", {
-                    initialization: {
-                        preferenceId: preferenceId,
-                    },
-                    customization: {
-                        visual: {
-                            buttonBackground: 'black',
-                            borderRadius: '8px',
-                        },
-                        texts: {
-                            valueProp: 'smart_option',
-                        },
-                    },
-                    onError: (error) => {
-                        console.error("Error al inicializar el Payment Brick: ", error);
-                        showMessage("Error al cargar el método de pago de Mercado Pago.", true);
-                        confirmPurchaseButton.style.display = 'block'; 
-                        confirmPurchaseButton.textContent = 'Reintentar Pago';
-                        confirmPurchaseButton.disabled = false;
-                    }
-                });
-            } else {
-                console.error("Contenedor de botón de pago no encontrado (#payment-button-container).");
-                showMessage("Error interno: Contenedor de pago no encontrado.", true);
-            }
-
-        } catch (error) { 
-            console.error('Error durante la confirmación de compra:', error.message);
-            confirmPurchaseButton.textContent = 'Error. Reintentar Compra';
-            confirmPurchaseButton.disabled = false;
-            showMessage('Hubo un error al procesar el pago: ' + error.message, true);
-        }
+    // 6. Creamos la preferencia de pago con los datos validados
+    const result = await preference.create({
+      body: {
+        items: itemsForMP,
+        
+        // Datos del comprador (Payer)
+        payer: {
+          name: 'Test',
+          surname: 'User',
+          email: 'test_user_@gmail.com',
+          phone: {
+            area_code: '099',
+            number: '1234567',
+          },
+          address: {
+            zip_code: '11000',
+            street_name: 'Av. Test',
+            street_number: 123,
+          },
+        },
+        
+        // 🟢 URLs CORREGIDAS (sin espacios iniciales y con rutas específicas)
+        back_urls: { 
+          success: "https://nonconstraining-denisha-diluvial.ngrok-free.dev/Finalizar_compra/pagina_exitosa.html", 
+          failure: "https://nonconstraining-denisha-diluvial.ngrok-free.dev/Carrito/pagina_carrito.html", 
+          pending: "https://nonconstraining-denisha-diluvial.ngrok-free.dev/index.html", 
+        },
+        auto_return: 'approved', 
+      },
     });
-};
 
-// Ejecución al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    updateCheckoutTotal();
-    updateCartCount();
-    handlePaymentSelection();
-    handlePaymentConfirmation();
+    // 7. Respondemos al frontend con el ID de la preferencia
+    console.log('Preferencia creada:', result.id);
+    res.json({ id: result.id });
+
+  } catch (error) {
+    // Muestra el error de Mercado Pago en la terminal
+    console.error('Error al crear la preferencia:', error.message);
+    // Envía el error al frontend para que muestre la alerta
+    res.status(500).json({ error: `Hubo un error al procesar el pago: ${error.message}` });
+  }
+});
+
+// 8. Iniciar el servidor
+app.listen(port, () => {
+  console.log(`Servidor de iPlace (SEGURO) escuchando en http://localhost:${port}`);
 });
