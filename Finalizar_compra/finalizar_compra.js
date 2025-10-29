@@ -19,7 +19,8 @@ const showMessage = (message, isError = false) => {
     } else {
         console.log("INFO: ", message);
     }
-    alert(message); // Temporal para debugging
+    // Nota: alert() bloquea la ejecución y puede ser molesto, pero es útil para debugging.
+    alert(message);
 };
 
 
@@ -52,7 +53,6 @@ const updateCartCount = () => {
 
 // 4. Lógica de selección de métodos de pago (sin cambios funcionales)
 const handlePaymentSelection = () => {
-    // ... (Tu lógica original estaba bien, la dejo aquí por completitud) ...
     if (mpOption) {
         mpOption.addEventListener('click', () => {
             document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
@@ -69,7 +69,7 @@ const handlePaymentSelection = () => {
 };
 
 
-// 5. Función para manejar la confirmación de la compra (¡ACTUALIZADA!)
+// 5. Función para manejar la confirmación de la compra (¡CON AMBAS CORRECCIONES!)
 const handlePaymentConfirmation = () => {
     // Asegurarse de que el botón existe antes de añadir el listener
     if (!confirmPurchaseButton) {
@@ -84,7 +84,7 @@ const handlePaymentConfirmation = () => {
 
         try {
             
-            // 🛑 PASO CLAVE 1: OBTENER LOS DATOS DEL CARRITO DE localStorage
+            // PASO 1: OBTENER LOS DATOS DEL CARRITO
             const fullCart = JSON.parse(localStorage.getItem('cart')) || []; 
             if (fullCart.length === 0) {
                 showMessage('El carrito está vacío. Agrega productos antes de pagar.', true);
@@ -93,38 +93,47 @@ const handlePaymentConfirmation = () => {
                 return;
             }
 
-            // ===================================================================
-            //          ⚡ CAMBIO DE SEGURIDAD ⚡
-            // ===================================================================
-            // Ya NO enviamos el precio. Solo ID y cantidad.
-            // El servidor se encargará de verificar el precio.
+            // (Esto ya estaba bien: enviar solo IDs y cantidad al servidor)
             const itemsForServer = fullCart.map(item => ({
                 id: item.id,
                 quantity: item.quantity,
             }));
             
-            // El servidor ahora espera { cart: [{id, quantity}, ...] }
             const requestBody = { cart: itemsForServer };
-            // ===================================================================
 
             
-            // Llama al servidor para crear la preferencia de pago
+            // PASO 2: Llamar al servidor para crear la preferencia
             const response = await fetch('http://localhost:4000/create_preference', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(requestBody), // 🛑 AHORA ENVIAMOS LOS DATOS SEGUROS
+                body: JSON.stringify(requestBody), 
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                // Si el servidor detectó un producto inválido, mostrará el error
                 throw new Error(data.error || 'Fallo la creación de la preferencia en el servidor.');
             }
 
             const preferenceId = data.id;
+
+            // =============================================================
+            //                INICIO DE LAS CORRECCIONES
+            // =============================================================
+            
+            // ✅ CORRECCIÓN 1: Leer el monto total desde localStorage
+            // Nos aseguramos de que sea un NÚMERO (float).
+            const totalAmount = parseFloat(localStorage.getItem('checkoutTotal'));
+
+            // Verificación por si el monto es inválido
+            if (isNaN(totalAmount) || totalAmount <= 0) {
+                showMessage('Error: El monto total es inválido. Intenta recargar la página.', true);
+                confirmPurchaseButton.textContent = 'Error. Reintentar';
+                confirmPurchaseButton.disabled = false;
+                return;
+            }
 
             // 6. Inicializar el Payment Brick de Mercado Pago
             const mpContainer = document.getElementById('payment-button-container');
@@ -137,6 +146,8 @@ const handlePaymentConfirmation = () => {
 
                 mp.bricks().create("payment", "payment-button-container", {
                     initialization: {
+                        // ✅ CORRECCIÓN 2: Añadir la propiedad 'amount'
+                        amount: totalAmount, 
                         preferenceId: preferenceId,
                     },
                     customization: {
@@ -148,6 +159,16 @@ const handlePaymentConfirmation = () => {
                             valueProp: 'smart_option',
                         },
                     },
+                    
+                    // ✅ CORRECCIÓN 3: Añadir el callback 'onReady'
+                    onReady: () => {
+                        /*
+                          Callback para cuando el Brick está 100% cargado y listo.
+                        */
+                        console.log('Payment Brick está LISTO y cargado.');
+                    },
+
+                    // (Este callback 'onError' ya lo tenías y estaba correcto)
                     onError: (error) => {
                         console.error("Error al inicializar el Payment Brick: ", error);
                         showMessage("Error al cargar el método de pago de Mercado Pago.", true);
@@ -160,6 +181,9 @@ const handlePaymentConfirmation = () => {
                 console.error("Contenedor de botón de pago no encontrado (#payment-button-container).");
                 showMessage("Error interno: Contenedor de pago no encontrado.", true);
             }
+            // =============================================================
+            //                  FIN DE LAS CORRECCIONES
+            // =============================================================
 
         } catch (error) { 
             console.error('Error durante la confirmación de compra:', error.message);

@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Limpia y convierte el precio a un número decimal (CRÍTICO)
                 const priceElement = productCard.querySelector('.price').textContent.trim();
-                const productPrice = parseFloat(priceElement.replace('$', '')); 
+                const productPrice = parseFloat(priceElement.replace('$', '').replace('.', ''));
                 
                 // CRÍTICO: Obtiene la URL de la imagen del mapa
                 const productImage = productImageMap[productId];

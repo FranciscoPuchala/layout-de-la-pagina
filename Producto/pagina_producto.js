@@ -53,7 +53,7 @@ const updateCartCount = () => {
 // Función para rellenar los detalles del producto en la página.
 const renderProductDetails = (selectedProduct) => {
     document.getElementById('product-name').textContent = selectedProduct.name;
-    document.getElementById('product-price').textContent = `$${selectedProduct.price.toFixed(2)}`;
+    document.getElementById('product-price').textContent = `$${selectedProduct.price}`;
     document.getElementById('product-description').textContent = selectedProduct.description;
 
     // LÓGICA DE LA IMAGEN: Carga la imagen del producto seleccionado
