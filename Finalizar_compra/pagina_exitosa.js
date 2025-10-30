@@ -9,4 +9,3 @@
             localStorage.removeItem('checkoutTotal');
         };
         document.addEventListener('DOMContentLoaded', updateCartCount);
-    
