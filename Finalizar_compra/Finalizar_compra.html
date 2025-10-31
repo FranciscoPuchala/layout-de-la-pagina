@@ -35,21 +35,31 @@
             <section class="payment-options">
                 <h3>Elige tu método de pago</h3>
                 
+                <!-- Opción de Mercado Pago -->
                 <div class="payment-method" id="mp-option">
-                    <h4>Pagar con Mercado Pago</h4>
-  
-                    <p>Serás redirigido a la plataforma segura de Mercado Pago...</p>
+                    <label>
+                        <input type="radio" name="payment-method" value="mercadopago" checked>
+                        Pagar con Mercado Pago
+                    </label>
                     
-                    <button id="pay-mp-button" class="confirm-purchase-button">Pagar con Mercado Pago</button>
+                    <!-- ESTE ES EL DIV CLAVE DONDE EL BRICK SE VA A RENDERIZAR -->
+                    <!-- El ID "mp-payment-brick-container" es crucial para finalizar_compra.js -->
+                    <div id="mp-payment-brick-container" style="display: block; margin-top: 15px;">
+                        <!-- El Brick de Mercado Pago aparecerá aquí cuando el JS lo inicialice -->
+                    </div>
                     
-                    <div id="payment-button-container"></div>
+                    <!-- El botón genérico (pay-mp-button) ya no es necesario para esta ruta de pago (Brick) -->
+                    <!-- Lo comentamos/ocultamos para que no interfiera -->
+                    <!-- <button id="pay-mp-button" class="confirm-button" style="display:none;">Pagar con Mercado Pago</button> -->
                 </div>
                 
-                <!-- Opción 2: Transferencia Bancaria -->
+                <!-- Opción de Transferencia -->
                 <div class="payment-method" id="transfer-option">
-                    <h4>Transferencia Bancaria</h4>
-                    <p>Realiza el pago directamente desde tu cuenta bancaria. Te mostraremos los datos a continuación.</p>
-                    <div class="bank-details">
+                    <label>
+                        <input type="radio" name="payment-method" value="transfer">
+                        Transferencia Bancaria
+                    </label>
+                   <div class="bank-details">
                         <h5>Datos para la transferencia:</h5>
                         <p><strong>Banco:</strong> Banco Digital S.A.</p>
                         <p><strong>Titular:</strong> iPlace E-commerce</p>
@@ -60,12 +70,16 @@
                         <p><strong>Importante:</strong> Una vez realizada la transferencia, envía el comprobante a <strong>pagos@iplace.com</strong> para procesar tu pedido.</p>
                     </div>
                 </div>
+                    <!-- Este botón sí se usaría para confirmar la orden con transferencia -->
+                    <button id="pay-mp-button" class="confirm-button" style="display:none;">Pagar con Mercado Pago</button> 
+                </div>
+                
             </section>
 
             <aside class="order-summary">
-                 <h3>Resumen del Pedido</h3>
-                 <div class="summary-line">
-                    <span>Subtotal:</span>
+                <h3>Resumen de la Orden</h3>
+                <div class="summary-line">
+                    <span>Productos:</span>
                     <span id="subtotal-price">$0.00</span>
                  </div>
                  <div class="summary-line">
