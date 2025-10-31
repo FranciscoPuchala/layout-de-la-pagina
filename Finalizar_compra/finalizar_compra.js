@@ -7,7 +7,7 @@ const confirmPurchaseButton = document.getElementById('pay-mp-button');
 
 // ** IMPORTANTE: CLAVE PÚBLICA DE MERCADO PAGO **
 // Mantenemos la clave por si usas otros componentes, pero no es estrictamente necesaria para la redirección.
-const MP_PUBLIC_KEY = "TEST-1c4d6d64-db6d-44ac-b486-13f6195fad11";
+const MP_PUBLIC_KEY = "APP_USR-6dd13bed-0f80-4ddf-b7b6-2382f59895ac";
 
 // Función de utilidad para mostrar mensajes (Usando console.log/error en lugar de alert)
 const showMessage = (message, isError = false) => {
