@@ -88,9 +88,8 @@ const handlePaymentConfirmation = () => {
             
             const requestBody = { cart: itemsForServer };
             
-            const RENDER_API_URL = 'https://mercadopago-api-live.onrender.com'; // ⬅️ ESTA ES LA NUEVA URL BASE
-            
-            const response = await fetch(`${RENDER_API_URL}/create_preference`, { 
+            // Llama al servidor (http://localhost:4000) para crear la preferencia de pago
+            const response = await fetch('http://localhost:4000/create_preference', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody), 
