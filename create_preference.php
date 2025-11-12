@@ -33,7 +33,7 @@ $DEFAULT_CURRENCY_ID = 'UYU'; // 🛑 CAMBIA ESTO SI USAS OTRA MONEDA
 $masterPriceList = [
     // ID: [ 'name' => nombre, 'price' => precio (en UYU) ]
     // (Datos tomados de tu server.js)
-    '1' => ['name' => 'iPhone 16 Pro Max', 'price' => 100000.00], 
+    '1' => ['name' => 'iPhone 16 Pro Max', 'price' => 10], 
     '2' => ['name' => 'iPad Pro', 'price' => 10.00], 
     '3' => ['name' => 'Apple Watch Series 10', 'price' => 30000.00], 
     '4' => ['name' => 'Funda de Silicona', 'price' => 1500.00], 
@@ -134,15 +134,3 @@ try {
 }
 
 ?>
-```eof
-
----
-
-### Paso 2: Ejecutar Composer para Descargar la Librería
-
-Ahora que tienes el archivo `create_preference.php` guardado en la carpeta de tu proyecto, usa la terminal para descargar la librería.
-
-En la terminal, que está en la carpeta `layout-de-la-pagina`, ejecuta:
-
-```bash
-composer require "mercadopago/dx-php"
