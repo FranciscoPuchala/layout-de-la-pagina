@@ -89,7 +89,7 @@ const handlePaymentConfirmation = () => {
             const requestBody = { cart: itemsForServer };
             
             // Llama al servidor (http://localhost:4000) para crear la preferencia de pago
-            const response = await fetch('http://localhost:4000/create_preference', {
+            const response = await fetch('https://layoutprueba.com/create_preference.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody), 
