@@ -99,7 +99,7 @@ try {
         'payer' => [
             'name' => 'Comprador',
             'surname' => 'Prueba',
-            'email' => 'test_user_@gmail.com',
+            'email' => 'julipuchala@gmail.com',
         ],
         // 🚨 Configuración de Redirección (URLs tomadas de tu server.js) 🚨
         'back_urls' => [ 
