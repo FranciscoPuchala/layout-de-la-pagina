@@ -1,4 +1,4 @@
- @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
         body {
             display: flex;
@@ -297,6 +297,7 @@
             border-top: 1px solid #eee;
             padding-top: 15px;
             margin-top: 10px;
+            margin-bottom: 20px; /* Aumento el margen inferior para separar de la alerta */
         }
 
         .confirm-purchase-button {
@@ -318,6 +319,37 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+        
+        /* ESTILOS PARA LA ALERTA DE ATENCIÓN */
+        .attention-alert {
+            background-color: #fffae6; /* Amarillo muy suave */
+            border: 3px solid #ffc107; /* Borde naranja/amarillo llamativo */
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
+            font-size: 1em;
+            animation: pulse-border 2s infinite; /* Animación para hacerlo más llamativo */
+        }
+
+        .attention-alert p {
+            margin: 5px 0;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .attention-alert strong {
+            color: #dc3545; /* Rojo para destacar la palabra ATENCIÓN */
+            font-weight: 700;
+        }
+        
+        /* Animación para el borde pulsante */
+        @keyframes pulse-border {
+            0% { border-color: #ffc107; }
+            50% { border-color: #ff9800; }
+            100% { border-color: #ffc107; }
+        }
+        /* FIN DE ESTILOS DE ALERTA */
         
         /* Media Queries para diseño responsivo */
         @media (max-width: 992px) {
